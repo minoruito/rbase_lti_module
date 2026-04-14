@@ -1,8 +1,10 @@
 class LmsUsersController < CustomUserApplicationController
   include ::Rbase::PluginModule::Extendable # 継承を許可する宣言（必須）
 
+  before_action :set_new_lms_user, only: [:new]
   before_action :set_lms_user, only: [:show, :edit, :update, :destroy]
   before_action :setup_values, only: [:index, :show, :new, :create, :edit, :update]
+  before_action :set_lms_user_custom_fields, only: [:new, :edit, :show]
   before_action :set_inst_dept
 
   respond_to :html
@@ -41,7 +43,6 @@ class LmsUsersController < CustomUserApplicationController
   public
 
   def new
-    @lms_user = ::LmsUser.new
     render_new
   end
 
@@ -87,9 +88,11 @@ class LmsUsersController < CustomUserApplicationController
           admin_user.errors.add(:base, I18n.t("activerecord.errors.models.admin_user.attributes.role.invalid_role"))
         end
         flash[:alert] = admin_user.errors.full_messages.uniq.join("<br/>").html_safe
+        set_lms_user_custom_fields
         render_new(:unprocessable_entity)
       end
     else
+      set_lms_user_custom_fields
       render_new(:unprocessable_entity)
     end
   end
@@ -117,9 +120,11 @@ class LmsUsersController < CustomUserApplicationController
           admin_user.errors.add(:base, I18n.t("activerecord.errors.models.admin_user.attributes.role.invalid_role"))
         end
         flash[:alert] = admin_user.errors.full_messages.uniq.join("<br/>").html_safe
+        set_lms_user_custom_fields
         render_edit(:unprocessable_entity)
       end
     else
+      set_lms_user_custom_fields
       render_edit(:unprocessable_entity)
     end
   end
@@ -132,6 +137,10 @@ class LmsUsersController < CustomUserApplicationController
 
   def setup_values
     @sites = current_admin_user.sites.all
+  end
+
+  def set_new_lms_user
+    @lms_user = ::LmsUser.new
   end
 
   def set_lms_user
@@ -163,4 +172,10 @@ class LmsUsersController < CustomUserApplicationController
     admin_user.password = SecureRandom.urlsafe_base64 if admin_user.new_record?
   end
 
+  def set_lms_user_custom_fields
+    @custom_fields = CustomField.lms_users
+    @custom_fields.each do |custom_field|
+      @lms_user.lms_user_custom_fields << LmsUserCustomField.new(custom_field_id: custom_field.id) unless @lms_user.lms_user_custom_fields.map(&:custom_field_id).include?(custom_field.id)
+    end
+  end
 end

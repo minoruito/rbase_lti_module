@@ -14,6 +14,14 @@ class LmsUser < ApplicationRecord
 
   scope :my_self, ->(lms_user) { where(id: lms_user.id).first}
 
+  has_many :lms_user_custom_fields, dependent: :destroy, autosave: true, inverse_of: :lms_user
+
+  has_many :custom_fields,
+           -> { order('custom_fields.display_order ASC') },
+           through: :lms_user_custom_fields
+
+  accepts_nested_attributes_for :lms_user_custom_fields, reject_if: :all_blank
+  validates_associated :lms_user_custom_fields
 
   validates :site_ids, presence: true
   validates :username, presence: true, uniqueness: true

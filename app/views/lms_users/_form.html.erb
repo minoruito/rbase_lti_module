@@ -24,6 +24,7 @@
   <%= form.input :inst_org_id, as: :select, collection: @institutions.map{|x|[x.org_name, x.id]}, input_html: {col: 2} %>
   <%= form.input :dept_org_id, as: :select, collection: @departments.map{|x|[x.org_name, x.id]}, input_html: {col: 2} %>
 </div>
-<div class="form-group form-inline input-group-sm align-items-start">
-  <%= form.input :entering_year, as: :string, input_html: {style: "max-width: 10rem;"} %>
+
+<div id = "custom_field">
+  <%= render partial: 'form_user_custom_fields', locals: {form: form} %>
 </div>
