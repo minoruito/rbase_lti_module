@@ -7,6 +7,8 @@ module Lti
     before_action :set_referrer
     before_action :set_admin_user
 
+    layout "application_lti"
+
     def login
       oidc = ::LTI::LTIOidcLogin.new(::LTIDatabase.new)
 
@@ -574,6 +576,9 @@ module Lti
       logic.settings
     end
 
+    def set_not_need_navlink
+      @not_need_navlink = true
+    end
     def reject_redirect_root
       false
     end

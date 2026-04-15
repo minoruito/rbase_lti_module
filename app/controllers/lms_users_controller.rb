@@ -74,7 +74,8 @@ class LmsUsersController < CustomUserApplicationController
     @lms_user = ::LmsUser.new(lms_user_params)
     @lms_user.lti_org_id = @lms_user.dept_org_id
     if @lms_user.valid?
-      admin_user = @lms_user.admin_user || ::AdminUser.new
+      target_site_id = @lms_user.sites.sort.first.id
+      admin_user = @lms_user.admin_user || ::AdminUser.joins(:admin_user_sites).where(name: @lms_user.username).where("site_id IN (?)",  target_site_id).first ||::AdminUser.new
       set_admin_user_attr(admin_user)
       if admin_user.valid?
         admin_user.save!

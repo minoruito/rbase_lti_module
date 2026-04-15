@@ -1,5 +1,5 @@
-import * as Rbase from "../../../../../../../app/javascript/rbase_common.js"
-import { RbaseController } from "../../../../../../../app/javascript/rbase_stimulus.js"
+import * as Rbase from "@app_root/app/javascript/rbase_common.js"
+import { RbaseController } from "@app_root/app/javascript/rbase_stimulus.js"
 import { get, post, put, patch, destroy } from '@rails/request.js'
 
 export default class extends RbaseController {
