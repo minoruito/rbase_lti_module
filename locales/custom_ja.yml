@@ -299,6 +299,7 @@ ja:
           file_name: "ファイル名"
           user_id: "ユーザID"
           status: "ステータス"
+          action: "Action"
         index:
           messages:
             no_record: "該当するインポート履歴はありません。"

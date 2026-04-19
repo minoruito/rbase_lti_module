@@ -1,5 +1,6 @@
 module Lti
   class BasesController < ApplicationController
+    include ::Rbase::PluginModule::Extendable # 継承を許可する宣言（必須）
     before_action :set_login
     before_action :set_restrict_display
     before_action :redirect_root, except: [:login, :launch]
