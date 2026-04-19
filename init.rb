@@ -8,4 +8,5 @@ Rbase::PluginModule.register(
   "RbaseLtiModule::CustomFieldExt",
   "RbaseLtiModule::ApplicationHelperExt",
   "RbaseLtiModule::TopHelperExt",
+  "RbaseLtiModule::AdminUsers::SessionsControllerExt",
 )

@@ -33,9 +33,11 @@ class LmsUserImport < ApplicationRecord
     lms_users = condition.search
 
     header = %w(
-        編集区分 ユーザID ユーザ名 名 姓 メールアドレス 登録元LMS 権限 学部 学科 入学年度 属性1 属性2 属性3 属性4 属性5 属性6 属性7 属性8 属性9 属性10
+        編集区分 ユーザID ユーザ名 名 姓 メールアドレス 登録元LMS 権限 学部 学科
     )
 
+    custom_fields = ::CustomField.where(custom_field_type: ::CustomField.custom_field_type_id_by_key(:lms_user))
+    header = header + custom_fields.map { |custom_field| custom_field.display_name }
     result << header
 
     lms_users.each do |lms_user|
@@ -52,19 +54,11 @@ class LmsUserImport < ApplicationRecord
         lms_user.lms,                                     #7:登録元LMS
         role_name,                                        #8:権限
         institution,                                      #9:学部
-        department,                                       #10:学科
-        lms_user.entering_year,                           #11:入学年度
-        lms_user.attr1,                                   #12:属性1
-        lms_user.attr2,                                   #13:属性2
-        lms_user.attr3,                                   #14:属性3
-        lms_user.attr4,                                   #15:属性4
-        lms_user.attr5,                                   #16:属性5
-        lms_user.attr6,                                   #17:属性6
-        lms_user.attr7,                                   #18:属性7
-        lms_user.attr8,                                   #19:属性8
-        lms_user.attr9,                                   #20:属性9
-        lms_user.attr10                                   #21:属性10
+        department                                       #10:学科
       ]
+      custom_fields.each do |custom_field|
+        form_column_value << lms_user.lms_user_custom_fields.select{|x| x.custom_field_id == custom_field.id}.first.field_value
+      end
 
       result << form_column_value
     end

@@ -1,6 +1,7 @@
 class LmsUser < ApplicationRecord
   include ::Rbase::PluginModule::Extendable # 継承を許可する宣言（必須）
   include ::SelectableAttr::Base
+  include CustomFieldDynamicAccessors
 
   has_many :lms_user_sites, dependent: :destroy, autosave: true
   has_many :sites, :through => :lms_user_sites
@@ -22,6 +23,18 @@ class LmsUser < ApplicationRecord
 
   accepts_nested_attributes_for :lms_user_custom_fields, reject_if: :all_blank
   validates_associated :lms_user_custom_fields
+
+  custom_field_dynamic_accessors!(
+    association: :lms_user_custom_fields,
+    data_source: :lms_user_custom_fields,
+    custom_field_scope: lambda {
+      if ::CustomField.respond_to?(:lms_users)
+        ::CustomField.lms_users
+      else
+        ::CustomField.where(custom_field_type: "lms_user").order(:display_order)
+      end
+    }
+  )
 
   validates :site_ids, presence: true
   validates :username, presence: true, uniqueness: true
