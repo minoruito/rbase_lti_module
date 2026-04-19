@@ -1,6 +1,7 @@
 class LmsUserImportRow
   include ::SelectableAttr::Base
   include ActiveModel::Model
+  include LmsUserImportRowCustomFieldAccessors
 
   attr_accessor :username
   attr_accessor :name
@@ -15,18 +16,6 @@ class LmsUserImportRow
   attr_accessor :inst_org_id
   attr_accessor :department
   attr_accessor :dept_org_id
-  attr_accessor :entering_year
-
-  attr_accessor :attr1
-  attr_accessor :attr2
-  attr_accessor :attr3
-  attr_accessor :attr4
-  attr_accessor :attr5
-  attr_accessor :attr6
-  attr_accessor :attr7
-  attr_accessor :attr8
-  attr_accessor :attr9
-  attr_accessor :attr10
 
   selectable_attr :edit_div do
     entry 'ADD', :add, '追加'
@@ -86,6 +75,20 @@ class LmsUserImportRow
     if self.lms.present?
       unless ::LTIDatabase.where(iss: self.lms).first
         self.errors.add(:lms, I18n.t(:"activerecord.errors.messages.invalid_attribute"))
+      end
+    end
+
+    # CustomField（lms_user）の format_regexp（LmsUserCustomField / CustomFieldConcern と同様）
+    if self.class.database_ready_for_lms_user_import_row_custom_fields?
+      self.class.lms_user_import_row_custom_field_definitions.each do |cf|
+        next if cf.format_regexp.blank?
+
+        value = send(cf.field_name)
+        next if value.blank?
+
+        unless value.to_s =~ /#{cf.format_regexp}/
+          self.errors.add(cf.display_name.to_sym, I18n.t(:"activerecord.errors.messages.format_invalid"))
+        end
       end
     end
 

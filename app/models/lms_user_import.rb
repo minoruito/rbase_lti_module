@@ -36,7 +36,7 @@ class LmsUserImport < ApplicationRecord
         編集区分 ユーザID ユーザ名 名 姓 メールアドレス 登録元LMS 権限 学部 学科
     )
 
-    custom_fields = ::CustomField.where(custom_field_type: ::CustomField.custom_field_type_id_by_key(:lms_user))
+    custom_fields = ::CustomField.where(custom_field_type: ::CustomField.custom_field_type_id_by_key(:lms_user)).order(:display_order)
     header = header + custom_fields.map { |custom_field| custom_field.display_name }
     result << header
 
@@ -57,7 +57,7 @@ class LmsUserImport < ApplicationRecord
         department                                       #10:学科
       ]
       custom_fields.each do |custom_field|
-        form_column_value << lms_user.lms_user_custom_fields.select{|x| x.custom_field_id == custom_field.id}.first.field_value
+        form_column_value << lms_user.send(custom_field.field_name)
       end
 
       result << form_column_value
@@ -109,7 +109,6 @@ class LmsUserImport < ApplicationRecord
 
       lms_user_import_row.institution = row[8]              #学部
       lms_user_import_row.department = row[9]               #学科
-      lms_user_import_row.entering_year = row[10]           #入学年度
 
       #組織IDの設定
       if lms_user_import_row.institution.present? and lms_user_import_row.department.present?
@@ -119,16 +118,11 @@ class LmsUserImport < ApplicationRecord
         end
       end
 
-      lms_user_import_row.attr1 = row[11]                   #属性1
-      lms_user_import_row.attr1 = row[12]                   #属性2
-      lms_user_import_row.attr1 = row[13]                   #属性3
-      lms_user_import_row.attr1 = row[14]                   #属性4
-      lms_user_import_row.attr1 = row[15]                   #属性5
-      lms_user_import_row.attr1 = row[16]                   #属性6
-      lms_user_import_row.attr1 = row[17]                   #属性7
-      lms_user_import_row.attr1 = row[18]                   #属性8
-      lms_user_import_row.attr1 = row[19]                   #属性9
-      lms_user_import_row.attr1 = row[20]                   #属性10
+      custom_fields = ::CustomField.where(custom_field_type: ::CustomField.custom_field_type_id_by_key(:lms_user)).order(:display_order)
+      custom_fields.each_with_index do |custom_field, i|
+        cell = row[10 + i]
+        lms_user_import_row.send("#{custom_field.field_name}=", cell.nil? ? nil : cell.to_s)
+      end
 
       ::Rails.logger.info("[LMSユーザインポート]load #{lms_user_import_row.edit_div} / #{lms_user_import_row.username}")
 
@@ -157,8 +151,22 @@ class LmsUserImport < ApplicationRecord
     end
   end
 
+  def self.apply_lms_user_custom_fields_from_import_row(lms_user, import_row)
+    scope =
+      if ::CustomField.respond_to?(:lms_users)
+        ::CustomField.lms_users
+      else
+        ::CustomField.where(custom_field_type: ::CustomField.custom_field_type_id_by_key(:lms_user)).order(:display_order)
+      end
+    scope.each do |cf|
+      val = import_row.send(cf.field_name)
+      lms_user.send("#{cf.field_name}=", val)
+    end
+  end
+
   private
-  LMS_USER_ATTR = %w(
+
+  LMS_USER_ATTR = %w[
     username
     name
     given_name
@@ -167,18 +175,7 @@ class LmsUserImport < ApplicationRecord
     lms
     role
     lti_org_id
-    entering_year
-    attr1
-    attr2
-    attr3
-    attr4
-    attr5
-    attr6
-    attr7
-    attr8
-    attr9
-    attr10
-  )
+  ].freeze
 
   def save_lms_users
     ::Rails.logger.info("[LMSユーザインポート]開始")
@@ -192,6 +189,7 @@ class LmsUserImport < ApplicationRecord
         LMS_USER_ATTR.each do |attr|
           lms_user.send("#{attr}=", lms_user_import_row.send(attr.to_sym))
         end
+        self.class.apply_lms_user_custom_fields_from_import_row(lms_user, lms_user_import_row)
 
         #学科設定
         lms_user.dept_org_id = lms_user.lti_org_id
@@ -214,6 +212,7 @@ class LmsUserImport < ApplicationRecord
         LMS_USER_ATTR.each do |attr|
           lms_user.send("#{attr}=", lms_user_import_row.send(attr.to_sym))
         end
+        self.class.apply_lms_user_custom_fields_from_import_row(lms_user, lms_user_import_row)
 
         #学科設定
         lms_user.dept_org_id = lms_user.lti_org_id
