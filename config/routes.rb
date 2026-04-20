@@ -32,6 +32,11 @@ Rails.application.routes.draw do
     #マスタ系
     #学部・学科管理
     resources :orgs
+
+    # 操作ログ一覧
+    resources :operation_logs do
+    end
+
     resources :import_histories
 
   end

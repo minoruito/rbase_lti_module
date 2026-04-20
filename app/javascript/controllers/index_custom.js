@@ -15,5 +15,9 @@ application.register("lms_user_imports", LmsUserImportsController)
 import LTIOrgsController from "./LTI/orgs_controller"
 application.register("lti--orgs", LTIOrgsController)
 
+import LTIOperationLogsController from "./LTI/operation_logs_controller"
+application.register("lti--operation_logs", LTIOperationLogsController)
+
+
 import LTIImportHistoriesController from "./LTI/import_histories_controller"
 application.register("lti--import_histories", LTIImportHistoriesController)

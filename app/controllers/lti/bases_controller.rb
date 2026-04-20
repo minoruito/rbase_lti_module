@@ -1,6 +1,7 @@
 module Lti
   class BasesController < ApplicationController
     include ::Rbase::PluginModule::Extendable # 継承を許可する宣言（必須）
+    include Lti::OperationLogCreation
     before_action :set_login
     before_action :set_restrict_display
     before_action :redirect_root, except: [:login, :launch]
@@ -360,22 +361,6 @@ module Lti
     
     def exception_redirect
       _render_403
-    end
-
-    # 操作ログ
-    def create_view_operation(from_type, instance, screen_name, description = nil)
-      lti_operation_log = LTIOperationLog.new
-      lti_operation_log.create_view_operation(from_type, instance, screen_name, description)
-    end
-
-    def create_saved_operation(from_type, instance, screen_name, description = nil)
-      lti_operation_log = LTIOperationLog.new
-      lti_operation_log.create_saved_operation(from_type, instance, screen_name, description)
-    end
-
-    def create_deleted_operation(from_type, instance, screen_name, description = nil)
-      lti_operation_log = LTIOperationLog.new
-      lti_operation_log.create_deleted_operation(from_type, instance, screen_name, description)
     end
 
     def clear_session_keys(excepted_keys = [])

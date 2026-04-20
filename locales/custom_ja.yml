@@ -21,6 +21,7 @@ ja:
 
     lti/orgs: "LTI/管理/組織管理"
 
+    lti/operation_logs: "eポート/管理/操作ログ"
     lti/import_histories: "LTI/管理/インポート履歴"
 
     lti/settings: "LTI/管理/設定"
@@ -90,6 +91,15 @@ ja:
         org_name: "組織名"
         org_div: "組織区分"
         parent_org_id: "親組織"
+      lti/operation_logs/search_conditions:
+        operated_at_from: "操作日(FROM)"
+        operated_at_to: "操作日(TO)"
+        user_id: "ユーザID"
+        user_name: "ユーザ名"
+        institution: "学部・研究科"
+        department: "学科・専攻"
+        form_type: "対象"
+        operation_div: "操作"
       lti/import_histories/search_conditions:
         import_type: "インポート対象"
         operated_at_from: "操作日(FROM)"
@@ -256,11 +266,23 @@ ja:
 
     lti:
       common:
+        operation_log:
+          sign_in:
+            title: "ログイン"
+          sign_out:
+            title: "ログアウト"
+
         messages:
           file_allow_upload_number: "アップロード可能数："
           file_allow_upload_ext: "アップロード許可ファイル拡張子："
           no_multi_answer: "評価対象外"
           yet_multi_answer: "未評価"
+
+      admin_top_menu:
+        org_button: "組織登録"
+        operation_log_button: "操作ログ"
+        import_history_button: "インポート履歴"
+
       orgs:
         fields:
           org_cd: "組織CD"
@@ -291,6 +313,24 @@ ja:
           title: "組織参照"
           header_guide: "組織を参照します。"
           button_cancel: "戻る"
+
+      operation_logs:
+        fields:
+          operated_at: "操作日時"
+          user_id: "ユーザID"
+          user_name: "ユーザ名"
+          institution: "学部・研究科"
+          department: "学科・専攻"
+          form_type: "対象"
+          operation_div: "操作"
+          screen_name: "画面名"
+          description: "説明"
+        index:
+          messages:
+            no_record: "該当する操作ログはありません。"
+          title: "操作ログ一覧"
+          button_search: "検索"
+          table_input_categories:
 
       import_histories:
         fields:
