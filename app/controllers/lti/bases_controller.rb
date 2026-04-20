@@ -1,6 +1,7 @@
 module Lti
   class BasesController < ApplicationController
     include ::Rbase::PluginModule::Extendable # 継承を許可する宣言（必須）
+    include RbaseLtiModule::LtiIframeContext
     include Lti::OperationLogCreation
     before_action :set_login
     before_action :set_restrict_display
@@ -213,7 +214,10 @@ module Lti
           resource_id = @launch.get_resource["id"].to_i
           resource_name = @launch.get_resource["title"]
 
-          redirect_to @launch_url
+          redir = @launch_url.presence || lti_default_post_launch_path
+          redirect_to ::LTI::LaunchContextToken.append_lti_context_to_url(
+            redir, lms_user.id, @launch.get_launch_id
+          )
         end
       rescue => e
         Rails.logger.error e.full_message
@@ -381,6 +385,10 @@ module Lti
       response.headers['Content-Security-Policy'] = "frame-ancestors #{url}"
     end
     
+    def lti_default_post_launch_path
+      root_path
+    end
+
     def set_login
       if params[:state]
         cookie = ::LTI::CookieStore.new

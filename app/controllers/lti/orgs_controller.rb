@@ -1,5 +1,6 @@
 module Lti
   class OrgsController < ::CustomUserApplicationController
+    include ::Rbase::PluginModule::Extendable # 継承を許可する宣言（必須）
     respond_to :html
 
     before_action :set_lti_org, only: [:show, :edit, :update, :show, :destroy]
