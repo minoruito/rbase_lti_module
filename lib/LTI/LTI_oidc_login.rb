@@ -100,8 +100,8 @@ module LTI
       # registration = @db.find_registration_by_issuer(params['iss'])
       registration = @db.find_registration_by_issuer_and_client_id(params['iss'], params['client_id'])
       
-      # Check we got something.
-      if registration.nil?
+      # Check we got something（LTIDatabase は未ヒット時に false を返していたため unless で判定）
+      unless registration
         raise ::LTI::Exception.new("Could not find registration details.")
       end
       

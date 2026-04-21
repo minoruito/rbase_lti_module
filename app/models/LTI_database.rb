@@ -55,7 +55,7 @@ class LTIDatabase < ApplicationRecord
     iss_sessionkey = iss.split("_")[0]
     
     if @session["iss"].blank? || @session["iss"][iss_sessionkey].blank?
-      return false
+      return nil
     end
 
     iss_sessionkey = iss.split("_")[0]
@@ -78,7 +78,7 @@ class LTIDatabase < ApplicationRecord
     iss_sessionkey = "#{iss}_#{client_id}"
 
     if @session["iss"].blank? || @session["iss"][iss_sessionkey].blank?
-      return false
+      return nil
     end
 
     result = ::LTI::LTIRegistration.new
@@ -97,7 +97,7 @@ class LTIDatabase < ApplicationRecord
       
   def find_deployment(iss, deployment_id)
     unless @session["iss"][iss]["deployment"].include?(deployment_id)
-      return false
+      return nil
     end
     
     deployment = ::LTI::LTIDeployment.new
@@ -113,7 +113,7 @@ class LTIDatabase < ApplicationRecord
     deployment_ids = @session["iss"][iss_sessionkey]["deployment"]
     deployment_ids = [deployment_ids.to_s] unless deployment_ids.is_a?(Array)
     unless deployment_ids.include?(deployment_id)
-      return false
+      return nil
     end
     
     deployment = ::LTI::LTIDeployment.new

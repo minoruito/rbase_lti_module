@@ -249,7 +249,7 @@ module LTI
       # @registration = @db.find_registration_by_issuer(@jwt['body']['iss'])
       @registration = @db.find_registration_by_issuer_and_client_id(@jwt['body']['iss'], @jwt['body']['aud'])
       
-      if @registration.nil?
+      unless @registration
         raise ::LTI::Exception.new("Registration not found.")
       end
       
@@ -282,7 +282,7 @@ module LTI
       # deployment = @db.find_deployment(@jwt['body']['iss'], @jwt['body']['https://purl.imsglobal.org/spec/lti/claim/deployment_id'])
       deployment = @db.find_deployment_by_iss_and_client_id(@jwt['body']['iss'], @jwt['body']['aud'], @jwt['body']['https://purl.imsglobal.org/spec/lti/claim/deployment_id'])
       
-      if deployment.nil?
+      unless deployment
         raise ::LTI::Exception.new("Unable to find deployment.")
       end
     end
