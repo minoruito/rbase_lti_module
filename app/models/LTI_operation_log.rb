@@ -2,8 +2,6 @@ class LTIOperationLog < ApplicationRecord
   include ::Rbase::PluginModule::Extendable # 継承を許可する宣言（必須）
   self.table_name = "lti_operation_logs"
 
-  include ApplicationConcern
-
   before_create :created_userstamp
 
   include ::SelectableAttr::Base
@@ -58,20 +56,38 @@ class LTIOperationLog < ApplicationRecord
   def create_operation(form_type, instance, screen_name, description)
     self.operated_at = Time.now
     self.form_type = ::LTIOperationLog.form_type_id_by_key(form_type) || form_type
-    
-    self.current_admin_user = get_current_admin_user
 
-    # LMSユーザ関連
+    admin = get_current_admin_user
+    self.current_admin_user = admin
+
+    # LMSユーザ関連（ローカル管理ログイン等で current_lms_user が無い場合は管理ユーザで代用）
     target_lms_user = get_current_lms_user
     self.lms_user = target_lms_user
-    self.user_id = target_lms_user.username
-    self.user_name = target_lms_user.name
 
-    self.inst_lti_org = target_lms_user.inst_lti_org
-    self.institution = target_lms_user.inst_lti_org.try(:org_name)
+    if target_lms_user
+      self.user_id = target_lms_user.username
+      self.user_name = target_lms_user.name
 
-    self.dept_lti_org = target_lms_user.dept_lti_org
-    self.department = target_lms_user.dept_lti_org.try(:org_name)
+      self.inst_lti_org = target_lms_user.inst_lti_org
+      self.institution = target_lms_user.inst_lti_org.try(:org_name)
+
+      self.dept_lti_org = target_lms_user.dept_lti_org
+      self.department = target_lms_user.dept_lti_org.try(:org_name)
+    elsif admin
+      self.user_id = admin.email.to_s
+      self.user_name = admin.try(:name).presence || admin.email.to_s
+      self.inst_lti_org = nil
+      self.institution = nil
+      self.dept_lti_org = nil
+      self.department = nil
+    else
+      self.user_id = "unknown"
+      self.user_name = "unknown"
+      self.inst_lti_org = nil
+      self.institution = nil
+      self.dept_lti_org = nil
+      self.department = nil
+    end
 
     # フォーム関連
     unless instance.nil?
