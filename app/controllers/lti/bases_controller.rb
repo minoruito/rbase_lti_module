@@ -500,14 +500,14 @@ module Lti
       end
 
       unless admin_user_signed_in?
-        # 開発時以外は、ログインチェックを行う。
-        if params["current_lms_user"].present?
-          unless Rails.env == "development"
-            unless ["login", "launch"].include?(action_name)
-              _render_403
-            end
+        if params["current_lms_user"].present? && Rails.env == "development"
+          # development かつ current_lms_user パラメータあり: 403 も未ログイン時のサインイン誘導も行わない
+        elsif params["current_lms_user"].present?
+          unless ["login", "launch"].include?(action_name)
+            _render_403
           end
         else
+          # current_lms_user パラメータなしの未ログイン — 環境に依らず SSO またはサインインへ誘導
           site = Site.first
           unexpected_url = [new_admin_user_session_path]
           unless SystemSetting.get_setting(:force_sign_in, site.id) == "1"
