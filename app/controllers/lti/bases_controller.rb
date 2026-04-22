@@ -16,14 +16,14 @@ module Lti
       oidc = ::LTI::LTIOidcLogin.new(::LTIDatabase.new)
 
       tool_host = (request.headers["HTTP_X_FORWARDED_PROTO"] ? "#{request.headers["HTTP_X_FORWARDED_PROTO"]}://" : request.protocol) + "#{request.host}"
-      lanch_url_index = params["target_link_uri"].index(tool_host)
-      if lanch_url_index == 0
-        lanch_url = params["target_link_uri"].slice(tool_host.size, params["target_link_uri"].size)
+      launch_url_index = params["target_link_uri"].index(tool_host)
+      if launch_url_index == 0
+        launch_url = params["target_link_uri"].slice(tool_host.size, params["target_link_uri"].size)
       else
-        lanch_url = "/launch"
+        launch_url = "/launch"
       end
       begin
-        auth_login_return_url = oidc.do_oidc_login_redirect(lanch_url)
+        auth_login_return_url = oidc.do_oidc_login_redirect(launch_url)
       rescue => e
         Rails.logger.error(e.full_message)
         Rails.logger.error e.backtrace.join("\n")
