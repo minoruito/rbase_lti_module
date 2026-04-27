@@ -14,7 +14,7 @@ module RbaseLtiModule
     module ClassMethods
       def added_entries_for_setting_custom_field_type_with_rbase_lti_module(mod)
         added_entries_for_setting_custom_field_type_without_rbase_lti_module(mod)
-        mod.entry 'lms_user', :lms_user, 'LmsUser'
+        mod.entry 'lms_user', :lms_user, 'Lmsユーザ'
       end
     end
   end
