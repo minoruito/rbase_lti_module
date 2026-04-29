@@ -26,11 +26,11 @@ module RbaseLtiModule
       member
       END_OF_HINT
         end
-        mod.entry 'CLTI002', :api_token    , 'APIトークン'    , required: true, category: :lms_setting, input_type: :string, reload: true, hint: <<-"END_OF_HINT" do
-      ※　APIの認証となるトークンを登録します。
-      07ae674e2d1ef55f144a1d6583e37904
-      END_OF_HINT
-        end
+      #   mod.entry 'CLTI002', :api_token    , 'APIトークン'    , required: true, category: :lms_setting, input_type: :string, reload: true, hint: <<-"END_OF_HINT" do
+      # ※　APIの認証となるトークンを登録します。
+      # 07ae674e2d1ef55f144a1d6583e37904
+      # END_OF_HINT
+      #   end
         mod.entry 'CLTI003', :lms_url    , 'LMSのURL'    , required: true, category: :lms_setting, input_type: :string, reload: true, hint: <<-"END_OF_HINT" do
       ※　リクエスト元のURLであるLMSのURLを指定します。
       END_OF_HINT
