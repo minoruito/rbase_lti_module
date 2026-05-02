@@ -21,8 +21,8 @@
 </div>
 
 <div class="form-group form-inline input-group-sm align-items-start">
-  <%= form.input :inst_org_id, as: :select, collection: @institutions.map{|x|[x.org_name, x.id]}, input_html: {col: 2} %>
-  <%= form.input :dept_org_id, as: :select, collection: @departments.map{|x|[x.org_name, x.id]}, input_html: {col: 2} %>
+  <%= form.input :inst_org_id, as: :select, collection: @institutions.map{|x|[x.org_name, x.id]}, input_html: {class: "select_institution", col: 2} %>
+  <%= form.input :dept_org_id, as: :select, collection: @departments.map{|x|[x.org_name, x.id, data: { parent_org_id: x.parent_org_id }]}, input_html: { class: "select_department", col: 2 } %>
 </div>
 
 <div id = "custom_field">

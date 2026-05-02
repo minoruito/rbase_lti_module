@@ -26,6 +26,17 @@ module RbaseLtiModule
           end
           session[:canvas_admin_embedded_ui].present?
         end
+
+        def custom_field_input_else_field_type_with_rbase_lti_module(form, options={})
+          case form.object.custom_field.field_type
+          when "institution"
+            institutions = ::LTIOrg.where(org_div: ::LTIOrg.org_div_id_by_key(:institution)).order(:org_cd).all
+            options.update({as: :select, collection: institutions.map{|x|[x.org_name, x.id]}, input_html: {class: "select_institution"}})
+          when "department"
+            departments = ::LTIOrg.where(org_div: ::LTIOrg.org_div_id_by_key(:department)).order(:org_cd).all
+            options.update({as: :select, collection: departments.map{|x|[x.org_name, x.id]}, input_html: {class: "select_department"}})
+          end
+        end
       end
     end
   end

@@ -1,6 +1,7 @@
 import * as Rbase from "@app_root/app/javascript/rbase_common.js"
 import { RbaseController } from "@app_root/app/javascript/rbase_stimulus.js"
 import { get, post, put, patch, destroy } from '@rails/request.js'
+import { RbaseLtiModuleCommon } from "@app_root/rbase_gems/rbase_lti_module/app/javascript/lti_module_common.js"
 
 const SEARCH_FORM_NAME = 'lms_users/search_conditions';
 const FORM_NAME = 'lms_user';
@@ -21,6 +22,10 @@ export default class extends RbaseController {
       Rbase.clearWebStorageFormValue(FORM_NAME);
     }
     Rbase.restoreWebStorageFormValueNoTrigger(FORM_NAME);
+    
+    RbaseLtiModuleCommon.initSelectInstDept();
+    RbaseLtiModuleCommon.selectInstDept();
+    
   }
   
   edit() {
@@ -30,6 +35,9 @@ export default class extends RbaseController {
       Rbase.clearWebStorageFormValue(FORM_NAME);
     }
     Rbase.restoreWebStorageFormValueNoTrigger(FORM_NAME);
+    
+    RbaseLtiModuleCommon.initSelectInstDept();
+    RbaseLtiModuleCommon.selectInstDept();
   }
   
   show() {
