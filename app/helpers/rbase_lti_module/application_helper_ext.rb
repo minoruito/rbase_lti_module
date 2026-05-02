@@ -34,7 +34,7 @@ module RbaseLtiModule
             options.update({as: :select, collection: institutions.map{|x|[x.org_name, x.id]}, input_html: {class: "select_institution"}})
           when "department"
             departments = ::LTIOrg.where(org_div: ::LTIOrg.org_div_id_by_key(:department)).order(:org_cd).all
-            options.update({as: :select, collection: departments.map{|x|[x.org_name, x.id]}, input_html: {class: "select_department"}})
+            options.update({as: :select, collection: departments.map{|x|[x.org_name, x.id, data: { parent_org_id: x.parent_org_id }]}, input_html: {class: "select_department"}})
           end
         end
       end
