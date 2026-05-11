@@ -1,8 +1,5 @@
 import {application} from "@app_root/app/javascript/controllers/application"
 
-import TopController from "./top_controller"
-application.register("top", TopController)
-
 import Admin__DatebasesController from "./admin/lti_databases_controller"
 application.register("admin--lti_databases", Admin__DatebasesController)
 
